@@ -10,7 +10,7 @@
     "serverless-parameters": "^0.1.0",
     "serverless-portable-templates": "file:plugins/serverless-portable-templates",
     "serverless-pseudo-parameters": "^2.4.0",
-    "serverless-step-functions": "^2.18.0"
+    "serverless-step-functions": "^3.0.0"
   },
   "license": "MIT",
   "repository": {

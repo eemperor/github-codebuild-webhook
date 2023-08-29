@@ -77,6 +77,25 @@ link of the PR status, it will take you to the CodeBuild build log.
 
 ![AWS Codebuild Triggered after PR update](https://github.com/svdgraaf/github-codebuild-webhook/blob/master/example.gif?raw=true)
 
+# Permissions Boundary
+
+In situations where a permissions boundary is required to create a resource, an `extensions` section can be added to `serverless.yml` to incorporate the permissions boundary.
+
+Below is an example of how the permissions boundary can be provided to allow the creation of the required roles of this project:
+
+```
+extensions:
+    ApigatewayToStepFunctionsRole:
+      Properties:
+          PermissionsBoundary: !Sub arn:aws:iam::#{AWS::AccountId}:policy/<permissions boundary name>
+    BuildDashforDashcommitStepFunctionsStateMachineRole:
+      Properties:
+          PermissionsBoundary: !Sub arn:aws:iam::#{AWS::AccountId}:policy/<permissions boundary name>
+    IamRoleLambdaExecution:
+      Properties:
+          PermissionsBoundary: !Sub arn:aws:iam::#{AWS::AccountId}:policy/<permissions boundary name>
+```
+
 # Todo
 
 *   Add (optional) junit parsing, so it can comment on files with (possible)

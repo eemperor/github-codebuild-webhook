@@ -131,7 +131,7 @@ module.exports.start_build = (event, context, callback) => {
 
       // Adding extra env variables to the CI build jobs
       if (cbEnv) {
-        var extraEnv = querystring.parse(cbEnv, '')
+        var extraEnv = querystring.parse(cbEnv, ';')
         for (var key in extraEnv) {
           params.environmentVariablesOverride.push({
             name: key,

@@ -1,6 +1,7 @@
 service: ${env:CB_BUILD_PROJECT}-github-webhook
 
 plugins:
+  - serverless-better-credentials
   - serverless-step-functions
   - serverless-parameters
   - serverless-portable-templates

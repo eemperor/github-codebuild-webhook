@@ -1,4 +1,4 @@
-service: ${env:CB_BUILD_PROJECT}-github-webhook
+service: serverless-webhook-${env:CB_BUILD_PROJECT}
 
 plugins:
   - serverless-better-credentials
@@ -74,6 +74,7 @@ provider:
   stage: ${opt:stage, self:custom.stage}
   versionFunctions: false
   memorySize: 128
+  endpointType: regional
 
   # you can add statements to the Lambda function's IAM Role here
   iam:
@@ -82,17 +83,17 @@ provider:
         - Effect: "Allow"
           Action:
             - codebuild:*
-          Resource: "arn:aws:codebuild:#{AWS::Region}:#{AWS::AccountId}:project/${env:CB_BUILD_PROJECT}"
+          Resource: "arn:#{AWS::Partition}:codebuild:#{AWS::Region}:#{AWS::AccountId}:project/${env:CB_BUILD_PROJECT}"
         - Effect: "Allow"
           Action:
             - ssm:GetParameter
           Resource:
-            - "arn:aws:ssm:#{AWS::Region}:#{AWS::AccountId}:parameter${env:SSM_GITHUB_ACCESS_TOKEN}"
-            - "arn:aws:ssm:#{AWS::Region}:#{AWS::AccountId}:parameter/${env:SSM_GITHUB_ACCESS_TOKEN}"
+            - "arn:#{AWS::Partition}:ssm:#{AWS::Region}:#{AWS::AccountId}:parameter/${env:SSM_GITHUB_ACCESS_TOKEN}"
+            - "arn:#{AWS::Partition}:ssm:#{AWS::Region}:#{AWS::AccountId}:parameter/${env:SSM_GITHUB_ACCESS_TOKEN}"
         - Effect: "Allow"
           Action:
             - kms:Decrypt
-          Resource: "arn:aws:kms:#{AWS::Region}:#{AWS::AccountId}:key/${env:KMS_SSM_KEYID}"
+          Resource: "arn:#{AWS::Partition}:kms:#{AWS::Region}:#{AWS::AccountId}:key/${env:KMS_SSM_KEYID}"
 
   environment:
     CB_BUILD_PROJECT:
@@ -173,7 +174,7 @@ stepFunctions:
         States:
           start_build:
             Type: Task
-            Resource: "arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:#{AWS::StackName}-start-build"
+            Resource: "arn:${env:AWS_PARTITION}:lambda:${aws:region}:${aws:accountId}:function:#{AWS::StackName}-start-build"
             Next: check_build_status
           wait_a_bit:
             Type: Wait
@@ -181,7 +182,7 @@ stepFunctions:
             Next: check_build_status
           check_build_status:
             Type: Task
-            Resource: "arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:#{AWS::StackName}-check-build-status"
+            Resource: "arn:${env:AWS_PARTITION}:lambda:${aws:region}:${aws:accountId}:function:#{AWS::StackName}-check-build-status"
             Next: check_build_status_outcome
             Retry:
               - ErrorEquals: [ "States.TaskFailed" ]
@@ -196,5 +197,5 @@ stepFunctions:
             Default: wait_a_bit
           build_done:
             Type: Task
-            Resource: "arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:#{AWS::StackName}-build-done"
+            Resource: "arn:${env:AWS_PARTITION}:lambda:${aws:region}:${aws:accountId}:function:#{AWS::StackName}-build-done"
             End: true

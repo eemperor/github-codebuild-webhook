@@ -88,7 +88,7 @@ provider:
           Action:
             - ssm:GetParameter
           Resource:
-            - "arn:#{AWS::Partition}:ssm:#{AWS::Region}:#{AWS::AccountId}:parameter/${env:SSM_GITHUB_ACCESS_TOKEN}"
+            - "arn:#{AWS::Partition}:ssm:#{AWS::Region}:#{AWS::AccountId}:parameter${env:SSM_GITHUB_ACCESS_TOKEN}"
             - "arn:#{AWS::Partition}:ssm:#{AWS::Region}:#{AWS::AccountId}:parameter/${env:SSM_GITHUB_ACCESS_TOKEN}"
         - Effect: "Allow"
           Action:
